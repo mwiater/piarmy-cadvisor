@@ -3,6 +3,11 @@ version: '3'
 services:
   influx:
     image: solderra/armhf-influxdb
+    ports:
+      - 0.0.0.0:8083:8083
+      - 0.0.0.0:8086:8086
+    networks:
+      - piarmy
     volumes:
       - influx:/var/lib/influxdb
     deploy:
@@ -14,7 +19,9 @@ services:
   grafana:
     image: braingamer/grafana-arm
     ports:
-      - 0.0.0.0:80:3000
+      - 0.0.0.0:8080:3000
+    networks:
+      - piarmy
     volumes:
       - grafana:/var/lib/grafana
     depends_on:
@@ -27,6 +34,8 @@ services:
 
   cadvisor:
     image: braingamer/cadvisor-arm:latest
+    networks:
+      - piarmy
     hostname: '{{.Node.ID}}'
     command: -logtostderr -docker_only -storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influx:8086
     volumes:
@@ -44,3 +53,7 @@ volumes:
     driver: local
   grafana:
     driver: local
+
+networks:  
+  piarmy:
+    external: true
