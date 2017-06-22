@@ -34,6 +34,8 @@ services:
 
   cadvisor:
     image: braingamer/cadvisor-arm:latest
+    ports:
+      - 0.0.0.0:8099:8080
     networks:
       - piarmy
     hostname: '{{.Node.ID}}'
