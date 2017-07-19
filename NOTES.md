@@ -10,6 +10,41 @@ docker exec `docker ps | grep -i influx | awk '{print $1}'` influx -execute 'CRE
 
 http://piarmy01:8080
 
+# CAdvisor
+http://piarmy01:8099/
+
+## API
+## REF: https://github.com/google/cadvisor/blob/master/docs/api.md
+http://piarmy01:8099/api/v2.1
+
+```
+appmetrics
+attributes
+events
+machine
+machinestats
+ps
+spec
+stats
+storage
+summary
+version
+```
+
+## Basic Examples:
+```
+http://piarmy01:8099/api/v2.1/version
+http://piarmy01:8099/api/v2.1/attributes       # num_cores is here
+http://piarmy01:8099/api/v2.1/machine          # num_cores is here
+http://piarmy01:8099/api/v2.1/machinestats
+http://piarmy01:8099/api/v2.1/ps
+http://piarmy01:8099/api/v2.1/spec
+http://piarmy01:8099/api/v2.1/storage
+```
+
+# Advanced Examples:
+http://piarmy01:8099/api/v2.1/stats?type=docker&recursive=true
+
 GRAPHANA DATA SOURCE:
 
 Name: influx
@@ -28,9 +63,49 @@ DB: cadvisor
 # REF: https://docs.influxdata.com/influxdb/v0.9/query_language/schema_exploration/#explore-measurements-with-show-measurements
 # REF: https://docs.influxdata.com/influxdb/v0.9/query_language/schema_exploration/#explore-series-with-show-series
 
-SHOW TAG VALUES FROM "load_average" WITH KEY = "machine"
+# Show series data by docker node id
+SHOW SERIES FROM load_average WHERE machine = 'sv97z72mx5zmvpdx5npmkyh2u'
 
-SHOW MEASUREMENTS WITH MEASUREMENT "load_average" WHERE "machine"="2oja5356noitbnhavj7qmgfyo"
+# List captured measurements by docker node id
+SHOW MEASUREMENTS WHERE machine = 'sv97z72mx5zmvpdx5npmkyh2u'
+
+```
+cpu_usage_per_cpu
+cpu_usage_system
+cpu_usage_total
+cpu_usage_user
+fs_limit
+fs_usage
+load_average
+memory_usage
+memory_working_set
+rx_bytes
+rx_errors
+tx_bytes
+tx_errors
+```
+
+# Show load_average values by docker node id
+SELECT value FROM load_average WHERE machine = 'sv97z72mx5zmvpdx5npmkyh2u'
+
+# Limit to last 24 hours
+SELECT value FROM load_average WHERE machine = 'sv97z72mx5zmvpdx5npmkyh2u' AND time > now() - 24h
+
+# Limit to last 1 hour # Showing all zeros for some reason
+SELECT value FROM load_average WHERE machine = 'sv97z72mx5zmvpdx5npmkyh2u' AND time > now() - 1h
+
+# Testing with memory_usage to see if stats appear # Working
+SELECT value FROM memory_usage WHERE machine = 'sv97z72mx5zmvpdx5npmkyh2u' AND time > now() - 1h
+
+# Testing with cpu_usage_total to see if stats appear # Working
+SELECT value FROM cpu_usage_total WHERE machine = 'sv97z72mx5zmvpdx5npmkyh2u' AND time > now() - 1h
+
+# Trying to parse cpu_total_usage into percent
+# REF: https://github.com/google/cadvisor/issues/1232
+SELECT DERIVATIVE(value, 1s) / 1000000000 FROM cpu_usage_total WHERE machine = 'sv97z72mx5zmvpdx5npmkyh2u' AND time > now() - 1h
+
+
+SHOW TAG VALUES FROM "load_average" WITH KEY = "machine"
 
 SHOW FIELD KEYS
 
@@ -41,15 +116,11 @@ SHOW SERIES
 
 SHOW SERIES FROM load_average
 
-"2oja5356noitbnhavj7qmgfyo"
 
-SHOW SERIES FROM load_average WHERE machine = '2oja5356noitbnhavj7qmgfyo'
 
-SHOW MEASUREMENTS WHERE machine = '2oja5356noitbnhavj7qmgfyo'
+SELECT value FROM load_average WHERE machine = 'sv97z72mx5zmvpdx5npmkyh2u'
 
-SELECT value FROM load_average WHERE machine = '2oja5356noitbnhavj7qmgfyo'
-
-SELECT value FROM load_average WHERE machine = '2oja5356noitbnhavj7qmgfyo' AND time > now() - 24h GROUP BY time(10m)
+SELECT value FROM load_average WHERE machine = 'sv97z72mx5zmvpdx5npmkyh2u' AND time > now() - 24h GROUP BY time(10m)
 
 SELECT value FROM load_average WHERE machine = '2oja5356noitbnhavj7qmgfyo' GROUP BY time(10m)
 
