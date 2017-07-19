@@ -1,4 +1,4 @@
-# This is currently in progress. This notice will be removed when ready for deployment and documentation is updated.
+# This is currently in progress. This notice will be removed when ready for deployment and documentation is updated. Assume unusable nonsense below.
 
 # REF: https://botleg.com/stories/monitoring-docker-swarm-with-cadvisor-influxdb-and-grafana/
 
