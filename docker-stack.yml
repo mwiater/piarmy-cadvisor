@@ -39,7 +39,7 @@ services:
     networks:
       - piarmy
     hostname: '{{.Node.ID}}'
-    command: -logtostderr -docker_only -storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influx:8086
+    command: -docker_only -enable_load_reader=true -storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influx:8086
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
@@ -49,7 +49,6 @@ services:
       - influx
     deploy:
       mode: global
-
 volumes:
   influx:
     driver: local
