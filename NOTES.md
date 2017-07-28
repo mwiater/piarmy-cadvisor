@@ -13,9 +13,9 @@ http://piarmy01:8080
 # CAdvisor
 http://piarmy01:8099/
 
-## API
-## REF: https://github.com/google/cadvisor/blob/master/docs/api.md
-http://piarmy01:8099/api/v2.1
+## API v2
+## REF: https://github.com/google/cadvisor/blob/master/docs/api_v2.md
+http://piarmy01:8099/api/v2.0
 
 ```
 appmetrics
@@ -32,6 +32,7 @@ version
 ```
 
 ## Basic Examples:
+# REF: https://github.com/google/cadvisor/blob/master/docs/api_v2.md
 ```
 http://piarmy01:8099/api/v2.1/version
 http://piarmy01:8099/api/v2.1/attributes       # num_cores is here
@@ -44,6 +45,34 @@ http://piarmy01:8099/api/v2.1/storage
 
 # Advanced Examples:
 http://piarmy01:8099/api/v2.1/stats?type=docker&recursive=true
+
+## API v1.3
+## REF: https://github.com/google/cadvisor/blob/master/docs/api.md
+http://piarmy01:8099/api/v1.3
+
+```
+containers
+docker
+events
+machine
+subcontainers
+```
+
+## Basic Examples (v1.3):
+# REF: 
+```
+http://piarmy01:8099/api/v1.3/subcontainers
+http://piarmy01:8099/api/v1.3/docker
+http://piarmy01:8099/api/v1.3/containers/docker/b349db18b8abae5cd305abf98f230c024feeb9c7f6aeee0558b7f9662e752f30
+```
+
+http://monitor_cadvisor.sv97z72mx5zmvpdx5npmkyh2u.r9h2nbj18lye3ok921rb5stgc:8099/api/v1.3/subcontainers
+
+# From inside container to another container on SAME host
+sudo wget http://monitor_cadvisor.sv97z72mx5zmvpdx5npmkyh2u.r9h2nbj18lye3ok921rb5stgc:8080/api/v1.3/subcontainers
+
+# From inside container to another container on DIFFERENT host
+sudo wget http://monitor_cadvisor.54z6afprdrp77pcnqc3f10t4v.cfrs9jlk52q575233q23ic6bw:8080/api/v1.3/subcontainers
 
 GRAPHANA DATA SOURCE:
 
